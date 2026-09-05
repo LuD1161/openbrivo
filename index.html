@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="OpenBrivo is a transparent, local-first CLI for authorized Allegion and Schlage XE360 access from macOS, Linux, and Windows.">
+  <meta name="theme-color" content="#0f172a">
+  <title>OpenBrivo — Local-first XE360 access</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #122033;
+      --muted: #5d6b7c;
+      --line: #dbe3e8;
+      --paper: #f7faf9;
+      --card: #ffffff;
+      --accent: #0f9f91;
+      --accent-dark: #08776e;
+      --accent-soft: #dff7f2;
+      --warning: #fff8e7;
+      --warning-line: #e5c96c;
+      --code: #0f1f32;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 12% 0%, #dff7f2 0, transparent 27rem), var(--paper);
+      color: var(--ink);
+      font: 16px/1.65 Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    a { color: inherit; }
+    .wrap { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 24px 0; }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      text-decoration: none;
+    }
+    .mark {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      border-radius: 11px;
+      background: var(--ink);
+      color: #5eead4;
+      box-shadow: 0 7px 18px #1220331c;
+    }
+    .nav-link { color: var(--muted); font-size: 14px; font-weight: 650; text-decoration: none; }
+    .nav-link:hover { color: var(--ink); }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, .88fr) minmax(520px, 1.12fr);
+      gap: 64px;
+      align-items: center;
+      padding: 76px 0 92px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
+      padding: 6px 12px;
+      border: 1px solid #a8ddd4;
+      border-radius: 999px;
+      background: #ffffffb8;
+      color: var(--accent-dark);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); content: ""; }
+    h1 {
+      margin: 0 0 24px;
+      font-size: clamp(48px, 5.3vw, 70px);
+      line-height: .99;
+      letter-spacing: -.067em;
+    }
+    h1 span { color: var(--accent); }
+    .lede { max-width: 570px; margin: 0; color: var(--muted); font-size: clamp(17px, 1.7vw, 20px); }
+    .actions { display: flex; gap: 12px; margin-top: 34px; flex-wrap: wrap; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 20px;
+      border: 1px solid var(--ink);
+      border-radius: 12px;
+      background: var(--ink);
+      color: white;
+      font-size: 14px;
+      font-weight: 750;
+      text-decoration: none;
+      transition: transform .16s ease, box-shadow .16s ease;
+    }
+    .button.secondary { border-color: var(--line); background: var(--card); color: var(--ink); }
+    .button:hover { transform: translateY(-2px); box-shadow: 0 9px 25px #1220331c; }
+    .credit { margin: 22px 0 0; color: var(--muted); font-size: 14px; }
+    .credit a { color: var(--accent-dark); font-weight: 800; text-underline-offset: 3px; }
+    .terminal {
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid #ffffff1c;
+      border-radius: 19px;
+      background: #0b1625;
+      box-shadow: 0 30px 70px #1220332c, 0 2px 8px #1220331f;
+      color: #d8e5ee;
+      font: 12px/1.75 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+    .terminal-bar {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      padding: 12px 15px;
+      border-bottom: 1px solid #ffffff12;
+      background: #101d2d;
+      color: #8190a1;
+      font-size: 10px;
+    }
+    .terminal-dots { display: flex; gap: 6px; }
+    .terminal-dot { width: 9px; height: 9px; border-radius: 50%; background: #526071; }
+    .terminal-dot:first-child { background: #ff6b62; }
+    .terminal-dot:nth-child(2) { background: #e9bd4b; }
+    .terminal-dot:nth-child(3) { background: #4fc76b; }
+    .terminal-label { justify-self: end; color: #5f7183; font-size: 9px; letter-spacing: .08em; text-transform: uppercase; }
+    .terminal-body { overflow-x: auto; padding: 26px 27px 29px; }
+    .terminal-line { min-height: 1.75em; white-space: nowrap; }
+    .command-line { display: flex; align-items: center; gap: 1ch; }
+    .typed-command {
+      display: inline-block;
+      width: 0;
+      overflow: hidden;
+      border-right: 1px solid #5eead4;
+      white-space: nowrap;
+      animation: type-command 1.35s steps(19, end) .35s forwards, hide-cursor .01s linear 1.9s forwards;
+    }
+    .run-step {
+      opacity: 0;
+      transform: translateY(3px);
+      animation: reveal-step .18s ease-out var(--delay) forwards;
+    }
+    .term-prompt, .term-accent { color: #5eead4; }
+    .term-title { color: #ffffff; font-weight: 800; letter-spacing: .14em; }
+    .term-muted { color: #7f91a3; }
+    .term-blue { color: #7dd3fc; }
+    .term-success { color: #86efac; font-weight: 700; }
+    .term-icon { display: inline-block; width: 2.3em; }
+    @keyframes type-command { to { width: 19ch; } }
+    @keyframes hide-cursor { to { border-right-color: transparent; } }
+    @keyframes reveal-step { to { opacity: 1; transform: translateY(0); } }
+    section { padding: 70px 0; }
+    .section-head { max-width: 680px; margin-bottom: 34px; }
+    h2 { margin: 0 0 10px; font-size: clamp(29px, 4vw, 42px); line-height: 1.12; letter-spacing: -.045em; }
+    .section-head p, .card p, .install-copy { color: var(--muted); }
+    .section-head p { margin: 0; font-size: 17px; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .card {
+      min-height: 205px;
+      padding: 25px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--card);
+      box-shadow: 0 14px 38px #1220330b;
+    }
+    .number {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      margin-bottom: 35px;
+      place-items: center;
+      border-radius: 10px;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      font-size: 13px;
+      font-weight: 850;
+    }
+    h3 { margin: 0 0 7px; font-size: 18px; letter-spacing: -.025em; }
+    .card p { margin: 0; font-size: 14px; }
+    .local {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 54px;
+      align-items: center;
+      padding: 48px;
+      border-radius: 25px;
+      background: var(--ink);
+      color: white;
+    }
+    .local h2 { margin-bottom: 15px; }
+    .local p { margin: 0; color: #b7c4d2; }
+    .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .fact { padding: 15px; border: 1px solid #ffffff1f; border-radius: 13px; background: #ffffff09; }
+    .fact strong { display: block; color: #5eead4; font-size: 15px; }
+    .fact span { color: #aab8c7; font-size: 12px; }
+    .install { display: grid; grid-template-columns: .8fr 1.2fr; gap: 52px; align-items: center; }
+    .install-copy { margin: 0; }
+    pre {
+      overflow-x: auto;
+      margin: 0;
+      padding: 24px;
+      border-radius: 17px;
+      background: var(--code);
+      color: #d8e5ee;
+      font: 13px/1.8 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      box-shadow: 0 15px 40px #1220331c;
+    }
+    pre b { color: #5eead4; font-weight: 600; }
+    .notice {
+      margin-bottom: 70px;
+      padding: 19px 22px;
+      border: 1px solid var(--warning-line);
+      border-radius: 14px;
+      background: var(--warning);
+      color: #665522;
+      font-size: 14px;
+    }
+    .notice strong { color: #3e3418; }
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 28px 0 38px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+    }
+    footer a { color: var(--ink); font-weight: 700; text-underline-offset: 3px; }
+    @media (max-width: 980px) {
+      .hero { grid-template-columns: 1fr; gap: 48px; text-align: center; }
+      .hero-copy { max-width: 720px; margin: 0 auto; }
+      .lede { margin: 0 auto; }
+      .actions { justify-content: center; }
+      .terminal { width: min(680px, 100%); margin: 0 auto; text-align: left; }
+    }
+    @media (max-width: 760px) {
+      .wrap { width: calc(100% - 28px); }
+      .nav-link { display: none; }
+      .hero { gap: 38px; padding: 55px 0 58px; }
+      .actions { max-width: 290px; margin-right: auto; margin-left: auto; }
+      .button { flex: 1 1 130px; }
+      .credit { max-width: 310px; margin-right: auto; margin-left: auto; }
+      .terminal { font-size: 10px; }
+      .terminal-body { padding: 19px 18px 22px; }
+      .terminal-bar { padding: 10px 12px; }
+      .grid, .local, .install { grid-template-columns: 1fr; }
+      .local, .card { padding: 23px; }
+      .local { gap: 30px; }
+      .install { gap: 25px; }
+      section { padding: 52px 0; }
+      pre { padding: 18px; font-size: 11px; }
+      footer { flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .typed-command { width: 19ch; border-right-color: transparent; animation: none; }
+      .run-step { opacity: 1; transform: none; animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <nav aria-label="Primary navigation">
+      <a class="brand" href="#top" aria-label="OpenBrivo home"><span class="mark" aria-hidden="true">⌁</span>OpenBrivo</a>
+      <a class="nav-link" href="https://github.com/LuD1161/openbrivo">View on GitHub ↗</a>
+    </nav>
+
+    <main id="top">
+      <header class="hero">
+        <div class="hero-copy">
+          <span class="eyebrow">Open source · Local first</span>
+          <h1>Your access.<br><span>Your machine.</span></h1>
+          <p class="lede">Brivo access normally lives behind a mobile app. OpenBrivo provides an inspectable desktop CLI for authorized Allegion and Schlage XE360 access—with no hosted backend and no telemetry.</p>
+          <div class="actions">
+            <a class="button" href="https://github.com/LuD1161/openbrivo">Get OpenBrivo</a>
+            <a class="button secondary" href="#how-it-works">How it works</a>
+          </div>
+          <p class="credit">Made <s>with ❤️</s> out of frustration by <a href="https://x.com/aseemshrey">@AseemShrey</a>.</p>
+        </div>
+        <div class="terminal" role="img" aria-label="Example OpenBrivo terminal session successfully unlocking an authorized XE360 reader">
+          <div class="terminal-bar">
+            <span class="terminal-dots" aria-hidden="true"><span class="terminal-dot"></span><span class="terminal-dot"></span><span class="terminal-dot"></span></span>
+            <span>openbrivo — python</span>
+            <span class="terminal-label">10-second demo</span>
+          </div>
+          <div class="terminal-body">
+            <div class="terminal-line command-line"><span class="term-prompt">$</span><span class="typed-command">python openbrivo.py</span></div>
+            <div class="terminal-line"></div>
+            <div class="terminal-line term-title run-step" style="--delay: 2s">OPENBRIVO</div>
+            <div class="terminal-line term-muted run-step" style="--delay: 2.35s">Secure local access for Allegion XE360</div>
+            <div class="terminal-line"></div>
+            <div class="terminal-line run-step" style="--delay: 3s"><span class="term-icon">🔐</span><span class="term-blue">Credential</span> <span class="term-success">validated</span> <span class="term-muted">cache</span></div>
+            <div class="terminal-line run-step" style="--delay: 4s"><span class="term-icon">◌</span><span class="term-blue">Bluetooth scan</span> <span class="term-muted">searching nearby devices…</span></div>
+            <div class="terminal-line"></div>
+            <div class="terminal-line term-muted run-step" style="--delay: 6.1s">  1   −48 dBm   Front Door XE360</div>
+            <div class="terminal-line run-step" style="--delay: 6.8s"><span class="term-accent">Unlock which device number?</span> 1</div>
+            <div class="terminal-line"></div>
+            <div class="terminal-line run-step" style="--delay: 7.5s"><span class="term-icon">→</span><span class="term-blue">Selected lock</span> Front Door</div>
+            <div class="terminal-line run-step" style="--delay: 8.35s"><span class="term-icon">⚡</span><span class="term-blue">Secure session</span> connected <span class="term-muted">· negotiating encrypted channel…</span></div>
+            <div class="terminal-line run-step" style="--delay: 9.65s"><span class="term-icon">🔓</span><span class="term-success">Gate unlocked</span> <span class="term-muted">credential accepted in 1.42s</span></div>
+          </div>
+        </div>
+      </header>
+
+      <section id="how-it-works">
+        <div class="section-head">
+          <h2>From account to lock, transparently.</h2>
+          <p>The full workflow runs from readable Python code on your own computer.</p>
+        </div>
+        <div class="grid">
+          <article class="card"><span class="number">01</span><h3>Provision once</h3><p>Sign in with your authorized Mobile Pass account and securely retrieve your XE360 credential.</p></article>
+          <article class="card"><span class="number">02</span><h3>Discover nearby</h3><p>Use the native Bluetooth stack to identify compatible readers within range.</p></article>
+          <article class="card"><span class="number">03</span><h3>Unlock locally</h3><p>Establish the encrypted Sapphire session and present the cached credential over BLE.</p></article>
+        </div>
+      </section>
+
+      <section>
+        <div class="local">
+          <div>
+            <h2>No OpenBrivo cloud.</h2>
+            <p>Cloud access is used only for first-time provisioning and explicit credential refreshes. Routine unlocks happen directly between your computer and the reader.</p>
+          </div>
+          <div class="facts" aria-label="Project facts">
+            <div class="fact"><strong>macOS</strong><span>CoreBluetooth</span></div>
+            <div class="fact"><strong>Linux</strong><span>BlueZ via Bleak</span></div>
+            <div class="fact"><strong>Windows</strong><span>WinRT via Bleak</span></div>
+            <div class="fact"><strong>Python 3.10+</strong><span>Readable source</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="install">
+        <div class="install">
+          <div>
+            <h2>Start locally.</h2>
+            <p class="install-copy">Clone the repository, install the platform-specific dependencies, and launch the guided flow. Full setup and troubleshooting details live in the README.</p>
+          </div>
+          <pre aria-label="OpenBrivo installation commands"><code><b>git clone</b> git@github.com:LuD1161/openbrivo.git
+<b>cd</b> openbrivo
+<b>python3 -m venv</b> .venv
+<b>source</b> .venv/bin/activate
+<b>python -m pip install</b> -r requirements.txt
+<b>python</b> openbrivo.py</code></pre>
+        </div>
+      </section>
+
+      <aside class="notice"><strong>Authorized use only.</strong> Use OpenBrivo only with accounts and locks you own or are explicitly permitted to access.</aside>
+    </main>
+
+    <footer>
+      <span>OpenBrivo · Local-first XE360 access</span>
+      <span><a href="https://github.com/LuD1161/openbrivo">GitHub</a> · <a href="https://x.com/aseemshrey">X / Twitter</a></span>
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "755968358360",
+    "firebase_url": "https://pass-prod.firebaseio.com",
+    "project_id": "pass-prod",
+    "storage_bucket": "pass-prod.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:755968358360:android:0f758ac3ab297c1d",
+        "android_client_info": {
+          "package_name": "com.brivo.pass"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "755968358360-bf6fvbg93d9u6i3tefnai1cju6p5p321.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnOoSRkfsWoIRQfdARd2LmTXO-WyOo-fI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "755968358360-bf6fvbg93d9u6i3tefnai1cju6p5p321.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "755968358360-o0nsurgfv11ljfe9qpuvimbbgft5lksb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "fff"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

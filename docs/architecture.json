@@ -1,0 +1,225 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "OpenBrivo Architecture",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "viewBox": [1390, 720],
+    "views": [
+      {
+        "id": "unlock-path",
+        "label": "Offline unlock path",
+        "focus": ["operator", "cli", "local-state", "session", "ble-transport", "xe360"],
+        "note": "Follow a routine unlock from the terminal through the encrypted BLE session."
+      },
+      {
+        "id": "provisioning-path",
+        "label": "First-run provisioning",
+        "focus": ["cli", "provisioning", "firebase", "brivo", "accesshub", "local-state"],
+        "note": "See how account authentication produces the owner-only local credential bundle."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "operator",
+      "type": "external",
+      "label": "Authorized Operator",
+      "sublabel": "macOS · Linux · Windows",
+      "pos": [20, 460],
+      "size": [150, 68]
+    },
+    {
+      "id": "cli",
+      "type": "frontend",
+      "label": "OpenBrivo CLI",
+      "sublabel": "openbrivo.py + unlock.py",
+      "tag": "local only",
+      "pos": [250, 455],
+      "size": [180, 78]
+    },
+    {
+      "id": "provisioning",
+      "type": "backend",
+      "label": "Credential Provisioning",
+      "sublabel": "identity, rights, BLE payload",
+      "pos": [400, 210],
+      "size": [210, 78]
+    },
+    {
+      "id": "firebase",
+      "type": "cloud",
+      "label": "Firebase Auth",
+      "sublabel": "email/password tokens",
+      "pos": [270, 35],
+      "size": [165, 68]
+    },
+    {
+      "id": "brivo",
+      "type": "cloud",
+      "label": "Brivo Pass APIs",
+      "sublabel": "account and Allegion tokens",
+      "pos": [600, 35],
+      "size": [185, 68]
+    },
+    {
+      "id": "accesshub",
+      "type": "cloud",
+      "label": "Allegion AccessHub",
+      "sublabel": "registration, rights, payload",
+      "pos": [930, 35],
+      "size": [195, 68]
+    },
+    {
+      "id": "local-state",
+      "type": "security",
+      "label": "Restricted Local State",
+      "sublabel": ".openbrivo/xe360 · local credentials",
+      "tag": "P-256 identity + BLE credential",
+      "pos": [720, 285],
+      "size": [230, 82]
+    },
+    {
+      "id": "session",
+      "type": "security",
+      "label": "Platinum Session",
+      "sublabel": "ECDH · AES-256-CBC · ECDSA",
+      "pos": [520, 455],
+      "size": [210, 78]
+    },
+    {
+      "id": "ble-transport",
+      "type": "backend",
+      "label": "Platform BLE Transport",
+      "sublabel": "CoreBluetooth · BlueZ · WinRT",
+      "tag": "PyObjC / Bleak",
+      "pos": [880, 455],
+      "size": [210, 78]
+    },
+    {
+      "id": "xe360",
+      "type": "external",
+      "label": "XE360 Reader",
+      "sublabel": "Sapphire Platinum BLE",
+      "tag": "credAccepted / credDenied",
+      "pos": [1200, 455],
+      "size": [165, 78]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Cloud services · TLS",
+      "wraps": ["firebase", "brivo", "accesshub"],
+      "pad": 18
+    },
+    {
+      "kind": "security-group",
+      "label": "User's computer · local trust boundary",
+      "wraps": ["cli", "provisioning", "local-state", "session", "ble-transport"],
+      "pad": 18
+    }
+  ],
+  "connections": [
+    {
+      "id": "operator-command",
+      "from": "operator",
+      "to": "cli",
+      "variant": "emphasis"
+    },
+    {
+      "id": "start-provisioning",
+      "from": "cli",
+      "to": "provisioning",
+      "label": "first run / refresh",
+      "variant": "dashed",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "firebase-auth",
+      "from": "provisioning",
+      "to": "firebase",
+      "label": "authenticate",
+      "variant": "security",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "brivo-account",
+      "from": "provisioning",
+      "to": "brivo",
+      "label": "account tokens",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "accesshub-enrollment",
+      "from": "provisioning",
+      "to": "accesshub",
+      "label": "device + BLE payload"
+    },
+    {
+      "id": "persist-credential",
+      "from": "provisioning",
+      "to": "local-state",
+      "label": "verified bundle",
+      "variant": "security"
+    },
+    {
+      "id": "load-credential",
+      "from": "local-state",
+      "to": "session",
+      "label": "credential + signing key",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "start-session",
+      "from": "cli",
+      "to": "session"
+    },
+    {
+      "id": "gatt-frames",
+      "from": "session",
+      "to": "ble-transport",
+      "label": "encrypted GATT frames",
+      "variant": "emphasis"
+    },
+    {
+      "id": "reader-session",
+      "from": "ble-transport",
+      "to": "xe360",
+      "label": "BLE Sapphire protocol",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Routine unlock",
+      "items": [
+        "Validated local bundle is reused without a cloud request",
+        "Only recognized XE360 advertisements are selectable"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Trust boundaries",
+      "items": [
+        "Passwords are never persisted",
+        "Identity, credentials, reader pins, and audits remain local"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Reader authorization",
+      "items": [
+        "Credential payload is signed and encrypted for the live session",
+        "The reader returns credAccepted or credDenied"
+      ]
+    }
+  ]
+}

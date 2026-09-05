@@ -1,0 +1,25 @@
+# Python and local environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+
+# OpenBrivo credentials, identities, bundles, and audit logs
+.openbrivo/
+openbrivo_tokens.json
+*.der
+*.pem
+*.key
+*.jsonl
+*.log
+
+# Editor and operating-system files
+.DS_Store
+.idea/
+.vscode/
+
+# Build output
+build/
+dist/

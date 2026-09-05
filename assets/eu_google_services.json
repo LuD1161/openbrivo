@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1023426043881",
+    "firebase_url": "https://pass-prod-eu-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "pass-prod-eu",
+    "storage_bucket": "pass-prod-eu.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1023426043881:android:5fe23c5faa30864c39b578",
+        "android_client_info": {
+          "package_name": "com.brivo.pass"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1023426043881-liuqdfvggclatbdp4up0oftneivkkllf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZycLr7MnBcVI2HpltJyWXsTqvM9tSP5w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1023426043881-liuqdfvggclatbdp4up0oftneivkkllf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1023426043881-rk4ltadjhjdlibsg79kgdpl00q9t6kib.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.brivo.pass",
+                "app_store_id": "1033578819"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
